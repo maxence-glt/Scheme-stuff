@@ -113,3 +113,42 @@
 
 ; 1.2 - Procedures and the Processes they Generate
 ; 1.9
+; Process 1:
+(define (+ a b)
+  (if (= a 0) b (inc (+ (dec a) b))))
+; You get 9
+; This is a recursive process as the shape of the process is one that expands and then contracts
+
+
+
+
+
+(define (+ a b)
+  if (= a 0) b (+ (dec a) (inc b)))
+; You also get 9
+; This one is an iterative process as it evaluates a and b before calling the func again
+
+
+
+
+
+; 1.10
+(define (A x y)
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1) (A x (- y 1))))))
+
+(A 1 10) == 1024
+(A 2 4) == 65536
+(A 3 3) == 65536
+
+; Don't know how to do maths proofs yet so ill try my best
+(define (f n) (A 0 n)) == 2n
+(define (g n) (A 1 n)) == n = 0 ;??
+
+
+
+
+
+; 1.11
