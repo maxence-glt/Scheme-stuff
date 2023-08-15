@@ -39,7 +39,29 @@
   (lambda (a lat)
     (cond 
       ((null? lat) (quote()))
-      (else (cond
-              ((eq? (car lat) a)(cdr lat))
-              (else (rember a
-                      cdr lat)))))))
+      ((eq? (car lat) a) (cdr lat))
+      (else (cons (car lat)
+              (rember a (cdr lat)))))))
+
+
+
+
+
+; firsts
+(define firsts
+  (lambda (l)
+    (cond 
+      ((null l) (quote()))
+      (cons (car (car l)) (firsts (cdr l))))))
+
+
+
+
+
+; insertR
+(define insertR
+  (lambda (new old lat
+    (cond...
+    
+    
+    ))))
