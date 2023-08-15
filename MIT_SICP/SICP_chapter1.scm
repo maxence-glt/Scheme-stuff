@@ -150,5 +150,26 @@
 
 
 
-
 ; 1.11
+; Recursive process
+(define (f n)
+  (cond ((< n 3) n)
+        (else (+ (f(- n 1)) (* 2 (f(- n 2))) (* 3 (f(- n 3)))))))
+
+
+
+
+
+; Iterative process
+(define (f-iter n)
+  (define (fn a b c count)
+    (cond ((< n 3) n)
+          ((<= count 0) a)
+          (fn (+ a (* 2 b) (* 3 c)) a b (- count 1))))
+  (fn 2 1 0 (- n 2)))
+
+
+
+
+
+; 1.12
