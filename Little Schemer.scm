@@ -1,4 +1,5 @@
-; My self study of the Little Schemer, starting with common functions
+; My self study of the Little Schemer by Daniel P. Friedman and Matthias Felleise
+; https://vpb.smallyu.net/%5BType%5D%20books/The%20Little%20Schemer.pdf
 
 ; atom? checks if input is an atom (Numbers, Strings, Symbols, Booleans, Characters)
 (define atom?
@@ -28,3 +29,17 @@
       ((null? lat) #f)
       (else (or (eq? (car lat) a)
       (member? a (cdrlat)))))))
+
+
+
+
+
+; rember
+(define rember
+  (lambda (a lat)
+    (cond 
+      ((null? lat) (quote()))
+      (else (cond
+              ((eq? (car lat) a)(cdr lat))
+              (else (rember a
+                      cdr lat)))))))
