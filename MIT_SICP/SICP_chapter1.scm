@@ -173,3 +173,24 @@
 
 
 ; 1.12
+(define (pascal row column)
+  (if ((or (= column 1) (= row column)) 1)
+        (+ (pascal (- row 1) (- column 1)) (pascal (- row 1) column))))
+
+
+
+
+
+; 1.14
+; Drew out tree on paper and got 4 as final answer
+; I think the number of steps is n ^ n
+; And the growth of space is the height of the tree of course
+
+
+
+
+
+; 1.15
+; a. 5 times since you need to divide angle 5 times to get it under 0.1
+; and each time you do so it calls p again
+; b. Order of growth in space = linear
