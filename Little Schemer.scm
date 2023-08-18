@@ -65,6 +65,85 @@
       ((null? lat) (quote()))
       (else
         (cond
-        ((eq? (car lat) (old)) (cdr lat))
+          ((eq? (car lat) old) (cons old (cons new (cdr lat))))
         ((else (cons (car lat)
-                (insertR new old (cdr lat))))))))))
+                (insertR new old 
+                  (cdr lat))))))))))
+
+
+
+
+
+; insertL
+(define (insertL new old lat)
+    (cond
+      ((null? lat) (quote()))
+      ((cond
+          ((eq? (car lat) old) (cons new (cons old (cdr lat))))
+          ((cons (car lat)
+                (insertL new old 
+                  (cdr lat))))))))
+
+
+
+
+
+; subst
+(define subst
+  (lambda (new old lat)
+    (cond
+      ((null? lat) (quote ()))
+      (else
+        (cond
+          ((eq? (car lat) old) (cons new (cdr lat))))
+        ((else (cons (car lat)
+                  (subst new old (cdr lat)))))))))
+
+
+
+
+
+; subst2
+(define (subst2 new o1 o2 lat)
+  (cond ((or (eq? (car lat) o1) (eq? (car lat) o2)) (cons new (cdr lat)))
+        (cons (car lat) (subst new o1 o2 (cdr lat)))))
+
+
+
+
+
+; multirember
+(define (multirember a lat)
+  (cond ((null? lat) (quote()))
+        ((eq? (car lat) a) (multirember a (cdr lat)))
+        ((cons (car lat) (multirember a (cdr lat))))))
+
+
+
+
+
+; multiinsertR
+(define (multiinsertR new old lat)
+  (cond ((null? lat) (quote()))
+        ((eq? (old) (car lat)) (cons (car lat) (cons new (multiinsertR new old (cdr lat)))))
+        ((cons (car lat) (multiinsertR new old (cdr lat))))))
+
+
+
+
+
+; multiinsertL
+(define (multiinsertR new old lat)
+  (cond ((null? lat) (quote()))
+        ((eq? (old) (car lat)) (cons new (cons old (multiinsertR new old (cdr lat)))))
+        ((cons (car lat) (multiinsertR new old (cdr lat))))))
+
+
+
+
+
+; multisubst
+(define multisubst (new old lat)
+  (cond ((null? lat) (quote()))
+        ((eq? old (car lat)) (cons new (multisubst new old (cdr lat))))
+        (cons (car lat) (multisubst new old cdr lat))))
