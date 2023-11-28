@@ -158,9 +158,9 @@
 (define (sub1 n)
   (- n 1))
 
-(define (add a b)
+(define ('+ a b)
   (if (zero? b) a
-      (add (add1 a) (sub1 b))))
+      ('+ (add1 a) (sub1 b))))
 
 ; using symbol
 (define ('- a b)
@@ -277,13 +277,21 @@
 
 
 
-; rember*, insert*, occur*, subst*
+; rember* and member*, insertR* and insertL*, occur*, subst*
 (define (rember* a l)
   (cond ((null? l) nil)
         ((atom? (car l))
                 (if (eq? a (car l)) (rember* a (cdr l))
                     (cons (car l) (rember* a (cdr l)))))
         (else (cons (rember* a (car l)) (rember* a (cdr l))))))
+
+(define (member* a l)
+  (cond ((null? l) #f)
+        ((atom? (car l))
+         (if (eq? (car l) a)
+             #t
+             (member* a (cdr l))))
+        (else (or (member* a (car l)) (member* a (cdr l))))))
 
 (define (insertR* new old l)
   (cond ((null? l) nil)
@@ -292,6 +300,14 @@
              (cons old (cons new (insertR* new old (cdr l))))
              (cons (car l) (insertR* new old (cdr l)))))
         (else (cons (insertR* new old (car l)) (insertR* new old (cdr l))))))
+
+(define (insertL* new old l)
+  (cond ((null? l) nil)
+        ((atom? (car l))
+         (if (eq? old (car l))
+             (cons new (cons (car l) (insertL* new old (cdr l))))
+             (cons (car l) (insertL* new old (cdr l)))))
+        (else (cons (insertL* new old (car l)) (insertL* new old (cdr l))))))
 
 (define (occur* a l)
   (cond ((null? l) 0)
@@ -308,3 +324,50 @@
              (cons new (subst* new old (cdr l)))
              (cons (car l) (subst* new old (cdr l)))))
         (else (cons (subst* new old (car l)) (subst* new old (cdr l))))))
+
+
+
+
+
+; leftmost
+(define (leftmost l)
+  (if (atom? (car l))
+      (car l)
+      (leftmost (car l))))
+
+
+
+
+
+; eqlist and numbered?
+(define (eqlist? l1 l2)
+  (cond ((and (null? l1) (null? l2)) #t)
+        ((or (null? l1) (null? l2)) #f)
+        ((and (atom? (car l1)) (null? l2)) #f) 
+        ((and (atom? (car l1)) (atom? (car l2)))
+         (if (eq? (car l1) (car l2))
+             (eqlist? (cdr l1) (cdr l2))
+             #f))
+        (else (and (eqlist? (car l1) (car l2)) (eqlist? (cdr l1) (cdr l2))))))
+
+(define (numbered? aexp)
+  (if (atom? aexp)
+      (number? aexp)
+      (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp)))))))
+
+
+
+
+
+; 2 different value funcs, first for (x + y) second for (+ x y)
+(define (value nexp)
+  (cond ((atom? nexp) nexp)
+        ((eq? (car (cdr nexp)) '+) (+ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+        ((eq? (car (cdr nexp)) 'x) (* (value (car nexp)) (value (car (cdr (cdr nexp))))))
+        (else (expt (value (car nexp)) (value (car (cdr (cdr nexp))))))))
+
+(define (value nexp)
+  (cond ((atom? nexp) nexp)
+        ((eq? (operator nexp) '+) (+ (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))
+        ((eq? (operator nexp) 'x) (* (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))
+        (else (expt (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))))
