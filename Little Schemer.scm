@@ -371,3 +371,23 @@
         ((eq? (operator nexp) '+) (+ (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))
         ((eq? (operator nexp) 'x) (* (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))
         (else (expt (value (1st-sub-exp nexp)) (value (2nd-sub-exp nexp))))))
+
+
+
+
+
+; () math
+(define (sero? n)
+  (null? n))
+
+(define (edd1 n)
+  (cons '() n))
+
+(define (zup1 n)
+  (cdr n))
+
+(define (new-add a b)
+  (if (sero? b)
+      a
+      (edd1 (new-add a (zup1 b)))))
+
