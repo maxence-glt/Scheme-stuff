@@ -27,31 +27,27 @@
     (cond
       ((null? lat) #f)
       (else (or (eq? (car lat) a)
-      (member? a (cdrlat)))))))
+      (member? a (cdr lat)))))))
 
 
 
 
 
 ; rember
-(define rember
-  (lambda (a lat)
-    (cond 
-      ((null? lat) (quote()))
-      ((eq? (car lat) a) (cdr lat))
-      (else (cons (car lat)
-              (rember a (cdr lat)))))))
+(define (rember a lat)
+    (cond ((null? lat) nil)
+          ((eq? (car lat) a) (cdr lat))
+          (else (cons (car lat) (rember a (cdr lat))))))
 
 
 
 
 
 ; firsts
-(define firsts
-  (lambda (l)
-    (cond 
-      ((null l) (quote()))
-      (cons (car (car l)) (firsts (cdr l))))))
+(define (firsts l)
+    (if (null? l)
+        nil
+        (cons (car (car l)) (firsts (cdr l)))))
 
 
 
@@ -75,28 +71,21 @@
 
 ; insertL
 (define (insertL new old lat)
-    (cond
-      ((null? lat) (quote()))
-      ((cond
-          ((eq? (car lat) old) (cons new (cons old (cdr lat))))
-          ((cons (car lat)
-                (insertL new old 
-                  (cdr lat))))))))
+    (cond ((null? lat) nil)
+          (else (if (eq? (car lat) old)
+                    (cons new (cons old (cdr lat)))
+                    (cons (car lat) (insertL new old (cdr lat)))))))
 
 
 
 
 
 ; subst
-(define subst
-  (lambda (new old lat)
-    (cond
-      ((null? lat) (quote ()))
-      (else
-        (cond
-          ((eq? (car lat) old) (cons new (cdr lat))))
-        ((else (cons (car lat)
-                  (subst new old (cdr lat)))))))))
+(define (subst new old lat)
+    (cond ((null? lat) nil)
+          (else (if (eq? (car lat) old)
+                    (cons new (cdr lat))
+                    (cons (car lat) (subst new old (cdr lat)))))))
 
 
 
@@ -390,4 +379,125 @@
   (if (sero? b)
       a
       (edd1 (new-add a (zup1 b)))))
+
+
+
+
+
+; set? makeset v1 and makeset v2
+(define (set? lat)
+  (cond ((null? lat) #t)
+        ((member? (car lat) (cdr lat)) #f)
+        (else (set? (cdr lat)))))
+
+(define (makeset lat) ; FIRST VERSION
+  (cond ((null? lat) nil)
+        ((member? (car lat) (cdr lat)) (makeset (cdr lat)))
+        (else (cons (car lat) (makeset (cdr lat))))))
+
+(define (makeset lat) ; SECOND VERSION
+  (if (null? lat)
+      nil
+      (cons (car lat) (makeset (multirember (car lat) (cdr lat))))))
+
+
+
+
+
+; subset?
+(define (subset? set1 set2)
+  (cond ((null? set1) #t)
+        ((member? (car set1) set2) (subset? (cdr set1) set2))
+        (else #f)))
+
+(define (eqset? set1 set2)
+  (and (subset? set1 set2) (subset? set2 set1)))
+
+(define (intersect set1 set2)
+  (cond ((null? set1) nil)
+        ((member? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
+        (else (intersect (cdr set1) set2))))
+
+
+
+
+
+; union 
+(define (intersect set1 set2)
+  (cond ((null? set1) nil)
+        ((member? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
+        (else (intersect (cdr set1) set2))))
+
+
+
+
+
+; a-pair?
+(define (a-pair? x)
+  (cond ((atom? x) #f)
+        ((null? x) #f)
+        ((null? (cdr x)) #f)
+        ((null? (cdr (cdr))) #t)
+        (else #f)))
+
+
+
+
+
+; fun?
+(define (fun? rel)
+  (set? (firsts rel)))
+
+
+
+
+
+; revrel
+(define (first p) (car p))
+(define (second p) (car (cdr p)))
+(define (third p) (car (cdr (cdr p))))
+(define (build s1 s2) (cons s1 (cons s2 nil)))
+
+(define (revrel rel)
+  (cond ((null? rel) nil)
+        (else (cons
+               (build (first (car rel)) (second (car rel)))
+               (revrel (cdr rel))))))
+
+
+
+
+
+; rember-f
+(define (rember-f test? a lat)
+    (cond ((null? lat) nil)
+          ((test? (car lat) a) (cdr lat))
+          (else (cons (car lat) (rember-f test? a (cdr lat))))))
+
+
+
+
+
+; currying
+(define (eq?-c a)
+    (lambda (x)
+      (eq? x a)))
+
+(define (rember-f test?)
+  (lambda (a lat)
+    (cond ((null? lat) nil)
+          ((test? (car lat) a) (cdr lat))
+          (else (cons (car lat) (rember-f test? a (cdr lat)))))))
+
+(define (insert-g seq)
+  (lambda (new old l)
+    (cond ((null? l) nil)
+          (else (if (eq? (car l) old)
+                    (seq new old (cdr l))
+                    (cons (car l) ((insert-g seq) new old (cdr l))))))))
+
+(define insertL (insert-g (lambda (new old l) (cons new (cons old l)))))
+(define insertR (insert-g (lambda (new old l) (cons old (cons new l)))))
+(define subst (insert-g (lambda (new old l) (cons new l))))
+(define seqrem (lambda (a l) ((insert-g (lambda (new old l) l)) #f a l)))
 
