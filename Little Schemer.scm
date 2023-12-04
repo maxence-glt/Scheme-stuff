@@ -501,3 +501,62 @@
 (define subst (insert-g (lambda (new old l) (cons new l))))
 (define seqrem (lambda (a l) ((insert-g (lambda (new old l) l)) #f a l)))
 
+(define (atom-to-function x)
+  (cond ((eq? x '+) add)
+        ((eq? x 'x) mul)
+        (else expt)))
+
+(define (value nexp)
+  ((atom-to-function (car nexp)) (1st-sub-exp nexp) (2nd-sub-exp nexp)))
+
+(define (eq?-c a) (lambda (x) (eq? a x)))
+
+
+
+
+
+; multirember-f 
+(define (multirember-f test?) (lambda (a lat)
+  (cond ((null? lat) nil)
+        ((test? (car lat) a) ((multirember-f test?) a (cdr lat)))
+        ((cons (car lat) ((multirember-f test?) a (cdr lat)))))))
+
+(define (multiremberT test? lat)
+  (cond ((null? lat) nil)
+        ((test? (car lat)) (multiremberT test? (cdr lat)))
+        (else (cons (car lat) (multiremberT test? (cdr lat))))))
+
+
+
+
+
+; friend
+(define (a-friend x y) (null? y))
+
+(define col a-friend)
+
+(define (new-friend newlat seen)
+  (a-friend newlat (cons 'tuna seen)))
+
+
+
+
+
+; multirember&co
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+     ((null? lat)
+      (col (quote ()) (quote ())))
+     ((eq? (car lat) a)
+      (multirember&co a
+                      (cdr lat)
+                      (lambda (newlat seen)
+                        (col newlat
+                             (cons (car lat) seen)))))
+     (else
+      (multirember&co a
+                      (cdr lat)
+                      (lambda (newlat seen)
+                        (col (cons (car lat) newlat)
+                             seen)))))))
