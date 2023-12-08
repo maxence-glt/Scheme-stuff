@@ -194,3 +194,81 @@
 ; a. 5 times since you need to divide angle 5 times to get it under 0.1
 ; and each time you do so it calls p again
 ; b. Order of growth in space = linear
+
+
+
+
+
+; 1.16
+(define (iter-fast-expt b n a)
+  (cond ((= n 0) (* a 1))
+        ((even? n) (iter-fast-expt b (/ n 2) (square a)))
+        (else (iter-fast-expt b (- n 1) (* a b)))))
+
+(iter-fast-expt 3 3 1) ; 27
+
+
+
+
+
+; 1.17
+(define (mul a b)
+  (cond ((= b 0) 0)
+        ((even? b) (double (mul a (half b))))
+        (else (+ a (mul a (- b 1))))))
+
+
+
+
+
+; 1.18
+(define (iter-mul a b n)
+  (display (list a b n)) (newline)
+  (cond ((= b 0) n)
+        ((even? b) (iter-mul (double a) (half b) n))
+        (else (iter-mul a (- b 1) (+ n a)))))
+
+(define (new-mul a b) (iter-mul a b 0))
+
+
+
+
+
+; skipping 19 (too much to read) and 20
+
+
+
+
+
+; 1.21 
+; 199: 199 (prime), 1999: 1999 (prime), 19999: 7
+
+
+
+
+
+; 1.22
+(define (search-for-primes lower upper amount)
+  (if (not (even? lower))
+      (cond ((= amount 0) (display "done"))
+            ((> lower upper) (display "done"))
+            ((prime? lower) (display lower) (timed-prime-test lower) (newline))))
+  
+  (if (not (or (= amount 0) (> lower upper)))
+      (if (prime? lower)
+          (search-for-primes (+ lower 1) upper (- amount 1))
+          (search-for-primes (+ lower 1) upper amount))))
+
+(search-for-primes 1000 10000 3)              ; 1009: 3 microsecs, 1013: 1, 1019: 2                AVG: 3.2
+(search-for-primes 10000 100000 3)            ; 10007: 3, 10009: 4, 10037: 3                            2.0
+(search-for-primes 100000 1000000 3)          ; 100003: 10, 100019: 11, 100043: 11                      3.4
+(search-for-primes 1000000 10000000 3)        ; 1000003: 32, 1000033: 31, 1000037: 32                   10.7
+(search-for-primes 10000000 100000000 3)      ; 10000019: 96, 10000079: 95, 10000103: 94                31.7
+(search-for-primes 100000000 1000000000 3)    ; 100000007: 314, 100000037: 295, 100000039: 306          305
+(search-for-primes 1000000000 10000000000 3)  ; 1000000007: 982, 1000000009: 951, 1000000021: 974       969
+
+; sqrt(10) is about 3.1622, and you can clearly see that it is increasing at that rate!
+; lower numbers take a similar amount of time due to how fast our newew hardware is
+; so, increasing the numbers by a lot yields very visible results
+
+; yes, my result IS compatible with that notion!
