@@ -272,3 +272,100 @@
 ; so, increasing the numbers by a lot yields very visible results
 
 ; yes, my result IS compatible with that notion!
+
+
+
+
+
+; 1.23
+; The new function looks like this
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor
+               n
+               ((lambda (x) (if (= x 2) 3 (+ x 2))) test-divisor)))))
+
+; Rerunning the last search-for-primes' results with the new function didn't change anything on my pc
+
+
+
+
+
+; 1.24
+(define (start-prime-test n start-time)
+  (if (fast-prime? n 100)
+      (report-prime (- (runtime) start-time))))
+
+(search-for-primes 1000 10000 3)              ; 1009: 124, 1013: 126, 1019: 130
+(search-for-primes 10000 100000 3)            ; 10007: 153, 10009: 148, 10037: 149
+(search-for-primes 100000 1000000 3)          ; 100003: 173, 100019: 176, 100043: 178
+(search-for-primes 1000000 10000000 3)        ; 1000003: 194, 1000033: 212, 1000037: 203
+(search-for-primes 10000000 100000000 3)      ; 10000019: 235, 10000079: 244, 10000103: 253
+(search-for-primes 100000000 1000000000 3)    ; 100000007: 279, 100000037: 303, 100000039: 282
+(search-for-primes 1000000000 10000000000 3)  ; 1000000007: 314, 1000000009: 308, 1000000021: 327
+
+; We can see that while initially it takes longer to compute the primes, the growth is logarithmic
+
+
+
+
+
+; 1.25
+; No since you need the remainder to work on the number thats being carried through
+; If you add (display x) (newline) in square you'll see the huge difference
+; The old (expmod 5 101 101) goes 5 -> 24 -> 71 -> 92 -> 1 -> 1
+; Thew new (expmod 5 101 101) goes 5 -> 125 -> 15625 -> 244140625 -> 298023223876953125 -> 88817841970012523233890533447265625
+
+
+
+
+
+; 1.26
+; I think it takes so much more time since Scheme needs to evaluate expmod twice before multiplying it together
+; instead of just evaluating it once then multiplying that number by itself
+; As for the time ocmplexity change, thats due to how it used to be a "simple" linear recursion which is now a tree recursion!
+
+
+
+
+
+; 1.27
+; Here's my procedure:
+(define (new-fermat-test n)
+  (define (try-it a) (= (expmod a n n) a))
+  (define (full-fermat-test n i)
+    (if (= i n)
+        #t
+        (if (try-it i) (full-fermat-test n (+ i 1)) #f)))
+  (full-fermat-test n 1))
+
+(new-fermat-test 561)   ; #t
+(new-fermat-test 1105)  ; #t
+(new-fermat-test 1729)  ; #t
+(new-fermat-test 2465)  ; #t
+(new-fermat-test 2821)  ; #t
+(new-fermat-test 6601)  ; #t
+
+; and of course, none of these are actually prime
+
+
+
+
+
+; 1.28 (will come back to this one)
+
+; 1.29 (will also come back)
+
+; 1.30
+(define (simpson-integral f a b n) 
+  (define (term x) (+ (f x) (* 4 (f (+ x h))) (f (+ x (* 2 h))))) 
+  (define (next x) (+ x (* 2 h))) 
+  (define h (/ (- b a) n)) 
+  (* (/ h 3) (sum term a next (- b (* 2 h))))) 
+
+
+
+
+
+; 1.31
