@@ -368,4 +368,50 @@
 
 
 
-; 1.31
+; 1.34
+; It would error since we aren't providing a procedure but rather a number
+; (f f) = ((g 2) 2)
+
+
+
+
+
+; 1.35
+; Did this one by accident honestly
+(define (golden x)
+  (fixed-point (lambda (x) (average x (+ 1 (/ 1 x)))) 5.0))
+
+; Displaying the output shows the logarithmic style of computation
+; 5.0
+; 3.1
+; 2.2112903225806453
+; 1.8317574880591045
+; 1.6888406416930857
+; 1.6404814101265492
+; 1.6250292853626571
+; 1.6202014053161418
+; 1.61870431104862
+; 1.6182411827463927
+; 1.6180980202824191
+; 1.6180537760655453
+
+
+
+
+
+; 1.36
+; I (again, accidentally) already added the display and newline
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2) (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (display guess) (newline)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+          next
+          (try next))))
+  (try first-guess))
+
+  ; x ^ x = 1000 can be rewritten as x = ((ln 1000) / ln x) 
+  ;                               OR x = 1000 ^ (1 / x)
+
+(fixed-point (lambda (x) (/ (log 1000) (log x))) 5)
