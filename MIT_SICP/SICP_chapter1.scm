@@ -415,3 +415,54 @@
   ;                               OR x = 1000 ^ (1 / x)
 
 (fixed-point (lambda (x) (/ (log 1000) (log x))) 5)
+; This one had 27 steps
+
+(fixed-point (lambda (x) (average x (/ (log 1000) (log x)))) 5)
+; This one had 7 steps
+
+
+
+
+
+; 1.37
+(define (cont-frac n d k)
+  (if (= k 0)
+      (d 1.0)
+      (+ (d 1.0) (/ (n 1.0) (cont-frac n d (- k 1))))))
+  
+(cont-frac (lambda (i) 1.0) (lambda (i) 1.0) k)
+
+(define (iter-cont-frac n d k)
+  (define (helper iter k)
+    (display iter) (newline)
+    (if (= k 0)
+        (+ 1 iter)
+        (helper (/ (n 1) (+ (d 1) iter)) (- k 1))))
+  (helper (/ 1 2) k))
+
+(iter-cont-frac (lambda (i) 1.0) (lambda (i) 1.0) k)
+
+
+
+
+
+; 1.38 - Had to look up how to do this fraction since I'm not great at number theory and its 3 am
+ (define (e-euler k) 
+   (+ 2.0 (cont-frac (lambda (i) 1) 
+                     (lambda (i) 
+                       (if (= (remainder i 3) 2) 
+                           (/ (+ i 1) 1.5) 
+                           1)) 
+                     k))) 
+
+
+
+
+
+; 1.39
+(define (tan-cf x k) 
+   (cont-frac (lambda (i) (if (= i 1) 
+                              x 
+                              (- (* x x)))) 
+              (lambda (i) (- (* i 2) 1)) k)) 
+
