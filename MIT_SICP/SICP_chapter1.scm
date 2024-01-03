@@ -466,3 +466,47 @@
                               (- (* x x)))) 
               (lambda (i) (- (* i 2) 1)) k)) 
 
+
+
+
+
+; 1.40
+(define (cubic a b c)
+  (newtons-method
+   (lambda (x) (+ (* x x x) (* a (* x x)) (* b x) c)) 1.0))
+
+
+
+  
+
+; 1.41
+(define (double procedure)
+  (lambda (x) (procedure (procedure x))))
+
+(((double (double double)) inc) 5) ; 21
+
+
+
+
+
+; 1.42
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+
+
+
+
+; 1.43
+(define (repeated f n) 
+  (if (< n 1) 
+      (lambda (x) x) 
+      (compose f (repeated f (- n 1))))) 
+
+
+
+
+
+; 1.44
+(define (smoothed f)
+  (lambda (x) (/ (+ (f (- x dx)) (f x) (f (+ x dx))) 3)))
