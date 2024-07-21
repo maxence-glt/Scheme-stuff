@@ -213,4 +213,222 @@
 
 
 
-; 
+; 2.18 (idk if helper functions aren't in the spirit of answering SICP problems!)
+(define (remove-last-pair l)
+  (if (null? (cdr l))
+      nil
+      (cons (car l) (remove-last-pair (cdr l)))))
+
+(define (reverse l)
+  (if (null? l)
+      nil
+      (cons (last-pair l) (reverse (remove-last-pair l)))))
+
+
+
+
+
+; 2.19
+(define us-coins (list 50 25 10 5 1))
+(define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+        ((or (< amount 0) (no-more? coin-values)) 0)
+        (else
+         (+ (cc amount
+                (except-first-denomination
+                 coin-values))
+            (cc (- amount (first-denomination coin-values))
+                coin-values)))))
+
+(define (first-denomination l)
+  (car l))
+
+(define (no-more? l)
+  (null? l))
+
+(define (except-first-denomination l)
+  (cdr l))
+
+; It doesn't matter as to what order the coins list is since we're using tree recursion
+; and the tree will just be in a different order but with the same final result
+
+
+
+
+
+; 2.20 *GO BACK TO THIS ONE (DRRacket has a bug I think where it passes a double list into rest)
+(define (same-parity first . rest)
+  (cond ((null? rest) nil)
+        ((even? (- (car rest) first))
+         (cons (car rest) (same-parity first (cdr rest))))
+        (else (same-parity first (cdr rest)))))
+
+
+
+
+
+; 2.21
+(define (square-list1 items)
+  (if (null? items)
+      nil
+      (cons (* (car items) (car items)) (square-list1 (cdr items)))))
+
+(define (square-list2 items)
+  (map (lambda (x) (* x x)) items))
+
+
+
+
+
+; 2.22
+; its reversed since answer starts with nil then 1 then 4 then 9 and so on
+; and since we are consing answer to the back of the car, its reversed
+
+; this doesn't work since we're consing lists together 
+
+
+
+
+
+; 2.23
+(define (for-each proc list)
+  (map proc list))
+
+
+
+
+
+; 2.24
+(1 (2 (3 4)))
+
+
+
+
+
+; 2.25
+(define list1 '(1 3 (5 7) 9))
+(define list2 '((7)))
+(define list3 '(1 (2 (3 (4 (5 (6 7)))))))
+
+(car (cdr (car (cdr (cdr list1)))))
+(car (car list2))
+(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr list3))))))))))))
+
+
+
+
+
+; 2.26
+(define x (list 1 2 3))
+(define y (list 4 5 6))
+
+(append x y)    ; (1 2 3 4 5 6)
+(cons x y)      ; ((1 2 3) 4 5 6)
+(list x y)      ; ((1 2 3) (4 5 6))
+
+
+
+
+
+; 2.27
+(define (deep-reverse l)
+    (cond ((null? l) nil)
+          ((not (pair? l)) l)
+          (else (cons (deep-reverse (last-pair l))
+                      (deep-reverse (remove-last-pair l))))))
+
+
+
+
+
+; 2.28 *GO BACK TO THIS ONE (not sure about using append)
+(define (fringe l)
+  (cond ((null? l) nil)
+        ((not (pair? l)) (cons l nil))
+        (else (append (fringe (car l))
+                      (fringe (cdr l))))))
+
+
+
+
+
+; 2.29
+(define (make-mobile left right)
+  (list left right))
+
+(define (make-branch length structure)
+  (list length structure))
+
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+  (car (cdr mobile)))
+
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (car (cdr branch)))
+
+(define (total-weight mobile)
+  (if (not (pair? mobile))
+      mobile
+      (+ (total-weight (branch-structure (left-branch mobile)))
+         (total-weight ( branch-structure(right-branch mobile))))))
+
+(define (is-balanced? mobile)
+  (if (or (not (pair? mobile)) (null? mobile))
+      #t
+      (and (eq? (* (total-weight (branch-structure (left-branch mobile)))
+                   (branch-length (left-branch mobile)))
+                (* (total-weight (branch-structure (right-branch mobile)))
+                   (branch-length (right-branch mobile))))
+           (and (is-balanced? (branch-structure (left-branch mobile)))
+                (is-balanced? (branch-structure (right-branch mobile)))))))
+
+; you'd need to change the selector functions
+
+
+
+
+
+; 2.30
+(define (square-tree-direct tree)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (square tree))
+        (else (cons (square-tree-direct (car tree))
+                    (square-tree-direct (cdr tree))))))
+
+(define (square-tree-map tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (square-tree-map sub-tree)
+             (square sub-tree)))
+       tree))
+
+
+
+
+
+; 2.31
+(define (tree-map proc tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (tree-map proc sub-tree)
+             (proc sub-tree)))
+       tree))
+
+
+
+
+
+; 2.32 HARD but I suck at permutaions
+
+
+
+
+
+; 2.33
