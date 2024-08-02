@@ -426,9 +426,117 @@
 
 
 ; 2.32 HARD but I suck at permutaions
-
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s))))
+        (append rest (map (lambda (x) (cons (car s) x)) rest)))))
 
 
 
 
 ; 2.33
+(define (map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) nil sequence))
+
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+
+
+
+
+; 2.34
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms)
+                (+ (* higher-terms x) this-coeff))
+              0
+              coefficient-sequence))
+
+
+
+
+
+; 2.35
+(define (count-leaves t)
+  (accumulate +
+              0
+              (map (lambda (x) 1) (enumerate-tree t))))
+
+
+
+
+
+; 2.36
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map (lambda (x) (car x)) seqs))
+            (accumulate-n op init (map (lambda (x) (cdr x)) seqs)))))
+
+
+
+
+
+; 2.37
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+
+(define (matrix-*-vector m v)
+  (map (lambda (x) (dot-product v x)) m))
+
+(define v1 (list (list 1 -1 2) (list 0 -3 1)))
+(define v2 (list 2 1 0))
+(matrix-*-vector v1 v2)
+
+(define (transpose mat)
+  (accumulate-n cons nil mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (x) (matrix-*-vector cols x)) m)))
+
+
+
+
+
+; 2.38
+; 1 1/2
+; 1/6
+; (1 (2 (3 ())))
+; (((() 1) 2) 3)
+
+; op must be associative because if not the order of operations matters
+; addition and multiplication work but division and subtraction dont
+
+
+
+
+
+; 2.39 (substitute accumulate for fold-right)
+(define (reverse1 sequence)
+  (accumulate (lambda (x y) (append y (cons x nil))) nil sequence))
+
+(define (reverse2 sequence)
+  (fold-left (lambda (x y) (cons y x)) nil sequence))
+
+
+
+
+
+; 2.40
+(define (unique-pairs n)
+  (flatmap (lambda (i)
+                     (map (lambda (j) (list i j))
+                          (enumerate-interval 1 (- i 1))))
+                   (enumerate-interval 1 n)))
+
+
+
+
+
+; 2.41
+
