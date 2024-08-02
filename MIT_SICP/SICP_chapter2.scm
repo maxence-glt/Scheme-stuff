@@ -539,4 +539,23 @@
 
 
 ; 2.41
+(define (sum-equal? tuple n)
+  (= n (accumulate + 0 tuple)))
 
+(define (enumerate-triples n)
+  (flatmap (lambda (i)
+             (flatmap (lambda (j)
+                        (map (lambda (k) (list i j k))
+                             (enumerate-interval 1 (- j 1))))
+                      (enumerate-interval 1 (- i 1))))
+           (enumerate-interval 1 n)))
+
+(define (ordered-triples n s)
+  (filter (lambda (x) (sum-equal? x s)) (enumerate-triples n)))
+
+
+
+
+
+; i'm too lazy to do 2.42 and 2.43
+; 2.44
