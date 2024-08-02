@@ -112,8 +112,8 @@
 
 ; multiinsertR
 (define (multiinsertR new old lat)
-  (cond ((null? lat) (quote()))
-        ((eq? (old) (car lat)) (cons (car lat) (cons new (multiinsertR new old (cdr lat)))))
+  (cond ((null? lat) nil)
+        ((eq? old (car lat)) (cons old (cons new (multiinsertR new old (cdr lat)))))
         ((cons (car lat) (multiinsertR new old (cdr lat))))))
 
 
@@ -121,10 +121,10 @@
 
 
 ; multiinsertL
-(define (multiinsertR new old lat)
-  (cond ((null? lat) (quote()))
-        ((eq? (old) (car lat)) (cons new (cons old (multiinsertR new old (cdr lat)))))
-        ((cons (car lat) (multiinsertR new old (cdr lat))))))
+(define (multiinsertL new old lat)
+  (cond ((null? lat) nil)
+        ((eq? old (car lat)) (cons new (cons old (multiinsertL new old (cdr lat)))))
+        ((cons (car lat) (multiinsertL new old (cdr lat))))))
 
 
 
@@ -543,11 +543,10 @@
 
 
 ; multirember&co
-(define multirember&co
-  (lambda (a lat col)
+(define (multirember&co a lat col)
     (cond
      ((null? lat)
-      (col (quote ()) (quote ())))
+      (col nil nil))
      ((eq? (car lat) a)
       (multirember&co a
                       (cdr lat)
@@ -559,4 +558,15 @@
                       (cdr lat)
                       (lambda (newlat seen)
                         (col (cons (car lat) newlat)
-                             seen)))))))
+                             seen))))))
+
+
+
+
+
+; multiinsertLR
+(define (multiinsertLR new oldL oldR lat)
+  (cond ((null? lat) nil)
+        ((eq? oldR (car lat)) (cons oldR (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+        ((eq? oldL (car lat)) (cons new (cons oldL (multiinsertLR new oldL oldR (cdr lat)))))
+        ((cons (car lat) (multiinsertLR new oldL oldR (cdr lat))))))
